@@ -69,6 +69,13 @@ with tabs[0]:
     st.subheader("Daily Trend of General Gross Profit and Quantity Sold")
     
     def plot_trend(profit_trend):
+        # Membuat plot untuk gross profit
+        gross_profit_plot = alt.Chart(profit_trend).mark_bar(color='lightblue', opacity=0.7).encode(
+            x='Day:T',
+            y=alt.Y('Gross Profit:Q', title='Gross Profit (IDR)', axis=alt.Axis(grid=False)),  # Menghilangkan garis grid
+            tooltip=['Day:T', 'Gross Profit:Q']
+        )
+        
         # Membuat plot untuk quantity sold
         qty_sold_plot = alt.Chart(profit_trend).mark_line(point=True, color='orange').encode(
             x='Day:T',
@@ -76,21 +83,14 @@ with tabs[0]:
             tooltip=['Day:T', 'Qty Sold:Q']
         )
     
-        # Membuat plot untuk gross profit
-        gross_profit_plot = alt.Chart(profit_trend).mark_bar(color='lightblue', opacity=0.7).encode(
-            x='Day:T',
-            y=alt.Y('Gross Profit:Q', title='Gross Profit (IDR)', axis=alt.Axis(grid=False)),  # Menghilangkan garis grid
-            tooltip=['Day:T', 'Gross Profit:Q']
-        )
-    
         # Menggabungkan kedua plot
         combined_plot = alt.layer(
-            qty_sold_plot,
-            gross_profit_plot
+            gross_profit_plot,
+            qty_sold_plot
         ).resolve_scale(
             y='independent'
         )
-    
+        
         # Menampilkan plot di Streamlit
         st.altair_chart(combined_plot, use_container_width=True)
     
@@ -134,112 +134,49 @@ with tabs[0]:
     
     ##########################################################################
     
+    def create_bar_chart(data, x_field, y_field, color, title, total_value, width=600, height=400):
+        data[f'Percentage'] = (data[x_field] / total_value) * 100
+        bar_chart = alt.Chart(data).mark_bar(color=color).encode(
+            y=alt.Y(f'{y_field}:N', title=title, sort=None),
+            x=alt.X(f'{x_field}:Q', title=f'{x_field} (IDR)', axis=alt.Axis(format=',.0f')),
+            tooltip=[f'{y_field}:N', f'{x_field}:Q', alt.Tooltip('Percentage:Q', format='.2f', title='Percentage')]
+        ).properties(
+            width=width,
+            height=height
+        ).configure_axis(
+            labelFontSize=10,
+            titleFontSize=12
+        )
+        return bar_chart
+    
     st.subheader("Top 15 Machines By Sales February 2024")
-    
-    # Mengurutkan data berdasarkan profit secara descending
     sorted_profit_by_machine = profit_by_machine.sort_values(by='Sales', ascending=False)
-    
-    # Mengambil top 15 mesin dengan penjualan tertinggi
     top_15_machines = sorted_profit_by_machine.head(15)
-    
-    # Membuat visualisasi dengan Altair
-    bar_chart_top = alt.Chart(top_15_machines).mark_bar(color='skyblue').encode(
-        y=alt.Y('Machines:N', title='Machines', sort=None),  # Tidak mengurutkan label sumbu y
-        x=alt.X('Sales:Q', title='Sales (IDR)', axis=alt.Axis(format=',.0f')),  # Format sumbu x sebagai rupiah
-        tooltip=['Machines:N', 'Sales:Q']
-    ).properties(
-        width=600,
-        height=400
-    ).configure_axis(
-        labelFontSize=10,  # Ukuran font label sumbu
-        titleFontSize=12  # Ukuran font judul sumbu
-    )
-    
-    # Menampilkan plot di Streamlit
+    bar_chart_top = create_bar_chart(top_15_machines, 'Sales', 'Machines', 'skyblue', 'Machines', total_sales_revenue)
     st.altair_chart(bar_chart_top, use_container_width=True)
-    
-    st.write(f'<div style="text-align: justify">Kelima belas vending machine berikut merupakan vending machine dengan jumlah penjualan tertinggi dan merupakan penghasil profit terbanyak pada periode Februari 2024.</div>', unsafe_allow_html=True)
+    st.write('<div style="text-align: justify">Kelima belas vending machine berikut merupakan vending machine dengan jumlah penjualan tertinggi dan merupakan penghasil profit terbanyak pada periode Februari 2024.</div>', unsafe_allow_html=True)
     st.markdown("<br><br>", unsafe_allow_html=True)
-    
-    #######################################################################################
     
     st.subheader("Bottom 15 Machines By Sales February 2024")
-    
-    # Mengambil bottom 15 mesin dengan penjualan terendah
     bottom_15_machines = sorted_profit_by_machine.tail(15)
-    
-    # Membuat visualisasi dengan Altair
-    bar_chart_bottom = alt.Chart(bottom_15_machines).mark_bar(color='salmon').encode(
-        y=alt.Y('Machines:N', title='Machines', sort=None),  # Tidak mengurutkan label sumbu y
-        x=alt.X('Sales:Q', title='Sales (IDR)', axis=alt.Axis(format=',.0f')),  # Format sumbu x sebagai rupiah
-        tooltip=['Machines:N', 'Sales:Q']
-    ).properties(
-        width=600,
-        height=400
-    ).configure_axis(
-        labelFontSize=10,  # Ukuran font label sumbu
-        titleFontSize=12  # Ukuran font judul sumbu
-    )
-    
-    # Menampilkan plot di Streamlit
+    bar_chart_bottom = create_bar_chart(bottom_15_machines, 'Sales', 'Machines', 'salmon', 'Machines', total_sales_revenue)
     st.altair_chart(bar_chart_bottom, use_container_width=True)
-    
-    st.write(f'<div style="text-align: justify">Kelima belas vending machine berikut adalah yang penjualannya terendah dalam waktu 1 bulan pada periode Februari 2024 dan memungkinkan menjadi penyebab kerugian, jika biaya operasional untuk vending machine pada daftar tersebut per bulannya lebih tinggi daripada penjualannya.</div>', unsafe_allow_html=True)
+    st.write('<div style="text-align: justify">Kelima belas vending machine berikut adalah yang penjualannya terendah dalam waktu 1 bulan pada periode Februari 2024 dan memungkinkan menjadi penyebab kerugian, jika biaya operasional untuk vending machine pada daftar tersebut per bulannya lebih tinggi daripada penjualannya.</div>', unsafe_allow_html=True)
     st.markdown("<br><br>", unsafe_allow_html=True)
-    
-    ##################################################################################################
     
     st.subheader("Top 10 Products by Gross Profit February 2024")
-    
-    # Mengurutkan data berdasarkan profit secara descending
     sorted_df = profit_by_product.sort_values(by='Gross Profit', ascending=False)
-    
-    # Mengambil 10 produk dengan profit tertinggi
     top_10_products = sorted_df.head(10)
-    
-    # Membuat visualisasi dengan Altair untuk top 10 products by gross profit
-    bar_chart_top_products = alt.Chart(top_10_products).mark_bar(color='skyblue').encode(
-        y=alt.Y('Product:N', title='Product', sort=None),  # Tidak mengurutkan label sumbu y
-        x=alt.X('Gross Profit:Q', title='Gross Profit'),
-        tooltip=['Product:N', 'Gross Profit:Q']
-    ).properties(
-        width=600,
-        height=400
-    ).configure_axis(
-        labelFontSize=10,  # Ukuran font label sumbu
-        titleFontSize=12  # Ukuran font judul sumbu
-    )
-    
-    # Menampilkan plot di Streamlit
+    bar_chart_top_products = create_bar_chart(top_10_products, 'Gross Profit', 'Product', 'skyblue', 'Product', total_gross_profit)
     st.altair_chart(bar_chart_top_products, use_container_width=True)
-    
-    st.write(f'<div style="text-align: justify">Air mineral merk Le Minerale 600ML merupakan produk yang menyumbang gross profit terbesar pada periode Februari 2024.</div>', unsafe_allow_html=True)
+    st.write('<div style="text-align: justify">Air mineral merk Le Minerale 600ML merupakan produk yang menyumbang gross profit terbesar pada periode Februari 2024.</div>', unsafe_allow_html=True)
     st.markdown("<br><br>", unsafe_allow_html=True)
     
-    ##################################################################################################
-    
     st.subheader("Bottom 10 Products by Gross Profit February 2024")
-    
-    # Mengambil 10 produk dengan profit terendah
     bottom_10_products = sorted_df.tail(10)
-    
-    # Membuat visualisasi dengan Altair untuk bottom 10 products by gross profit
-    bar_chart_bottom_products = alt.Chart(bottom_10_products).mark_bar(color='salmon').encode(
-        y=alt.Y('Product:N', title='Product', sort=None),  # Tidak mengurutkan label sumbu y
-        x=alt.X('Gross Profit:Q', title='Gross Profit'),
-        tooltip=['Product:N', 'Gross Profit:Q']
-    ).properties(
-        width=600,
-        height=400
-    ).configure_axis(
-        labelFontSize=10,  # Ukuran font label sumbu
-        titleFontSize=12  # Ukuran font judul sumbu
-    )
-    
-    # Menampilkan plot di Streamlit
+    bar_chart_bottom_products = create_bar_chart(bottom_10_products, 'Gross Profit', 'Product', 'salmon', 'Product', total_gross_profit)
     st.altair_chart(bar_chart_bottom_products, use_container_width=True)
-    
-    st.write(f'<div style="text-align: justify">Berdasarkan grafik tersebut, ditemukan bahwa beberapa produk hanya menghasilkan gross profit yang sangat sedikit dalam penjualan satu bulan. Bahkan, produk YOUVIT Multivitamin dijual lebih murah dari harga modal produk karena tidak laku di pasaran, sehingga terdapat kerugian sebesar dua ribu rupiah.</div>', unsafe_allow_html=True)
+    st.write('<div style="text-align: justify">Berdasarkan grafik tersebut, ditemukan bahwa beberapa produk hanya menghasilkan gross profit yang sangat sedikit dalam penjualan satu bulan. Bahkan, produk YOUVIT Multivitamin dijual lebih murah dari harga modal produk karena tidak laku di pasaran, sehingga terdapat kerugian sebesar dua ribu rupiah.</div>', unsafe_allow_html=True)
 
 with tabs[1]:
     # Load datasets
