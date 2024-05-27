@@ -11,7 +11,7 @@ st.title("Monstermart Report February 2024")
 css = '''
 <style>
     .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
-    font-size:3rem;
+    font-size:5rem;
     }
 </style>
 '''
