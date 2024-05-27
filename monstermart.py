@@ -574,11 +574,11 @@ with tabs[2]:
 
 css = '''
 <style>
-    .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
-    font-size:18px;
-    margin: 0;
-    width: 100%;
-    }
+   button[data-baseweb="tab"] {
+   font-size: 18px;
+   margin: 0;
+   width: 100%;
+   }
 </style>
 '''
 
