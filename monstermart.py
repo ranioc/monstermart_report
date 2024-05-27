@@ -8,17 +8,11 @@ import plotly.express as px
 
 st.title("Monstermart Report February 2024")
 
-css = '''
-<style>
-    .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
-    font-size:5rem;
-    }
-</style>
-'''
+categories = ['Profit','Product Loss','Top Sales & Restock']
 
-profit_report, loss_report, restock_report = st.tabs(['Profit', 'Product Loss', 'Product Top Sales & Restock'])
+tabs = st.tabs(categories)
 
-with profit_report:
+with tabs[0]:
     st.header('Analisis Gross Profit Vending Machine Monstermart Periode Februari 2024')
     
     st.markdown("<br>", unsafe_allow_html=True)
@@ -247,7 +241,7 @@ with profit_report:
     
     st.write(f'<div style="text-align: justify">Berdasarkan grafik tersebut, ditemukan bahwa beberapa produk hanya menghasilkan gross profit yang sangat sedikit dalam penjualan satu bulan. Bahkan, produk YOUVIT Multivitamin dijual lebih murah dari harga modal produk karena tidak laku di pasaran, sehingga terdapat kerugian sebesar dua ribu rupiah.</div>', unsafe_allow_html=True)
 
-with loss_report:
+with tabs[1]:
     # Load datasets
     fl_data = pd.read_csv('fltanggalperfebsortedbytanggalawal.csv')
     qty_data = pd.read_csv('qtylostpertanggal.csv')
@@ -319,7 +313,7 @@ with loss_report:
         fl_tanggal_data.index += 1
         st.write(fl_tanggal_data)
 
-with restock_report:
+with tabs[2]:
     df1 = pd.read_csv('AKULAKU_FEB.csv')
     df2 = pd.read_csv('ALLSEDAYU_FEB.csv')
     df3 = pd.read_csv('ARGAPURA2_FEB.csv')
@@ -577,3 +571,13 @@ with restock_report:
     
     if __name__ == "__main__":
         main()
+
+css = '''
+<style>
+    .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+    font-size:2rem;
+    }
+</style>
+'''
+
+st.markdown(css, unsafe_allow_html=True)
