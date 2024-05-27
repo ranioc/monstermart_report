@@ -575,7 +575,7 @@ with tabs[2]:
 css = '''
 <style>
     .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
-    font-size:16px;
+    font-size:18px;
     }
 </style>
 '''
