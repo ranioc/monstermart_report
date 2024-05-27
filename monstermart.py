@@ -8,6 +8,14 @@ import plotly.express as px
 
 st.title("Monstermart Report February 2024")
 
+css = '''
+<style>
+    .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+    font-size:2rem;
+    }
+</style>
+'''
+
 profit_report, loss_report, restock_report = st.tabs(['Profit', 'Product Loss', 'Product Top Sales & Restock'])
 
 with profit_report:
