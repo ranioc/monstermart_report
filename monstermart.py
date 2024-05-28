@@ -360,7 +360,6 @@ with tabs[2]:
     
     def main():
         st.header('Vending Machine Top Sales')
-    
         options = {
             'ALL': 'combined.csv',
             'AKULAKU': 'AKULAKU_FEB.csv',
@@ -467,6 +466,7 @@ with tabs[2]:
             'UNIVERSAL LUGAGE 2': 'UNIVERSALLUGAGE2_FEB.csv',
             'UNIVERSITAS PANCASILA': 'UNIVERSITASPANCASILA_FEB.csv'
         }
+        st.subheader('Top 10 Quantities Sold')
         selected_option = st.selectbox('Select Vending Machine', list(options.keys()))
         months = {'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'}
         selected_month = st.selectbox('Select Month', months)
@@ -476,25 +476,40 @@ with tabs[2]:
         df = pd.read_csv(options[selected_option])
         df_sorted = df.sort_values(by="Qty Sold", ascending=False)
         top_10 = df_sorted.head(10)
-        st.subheader('Top 10 Quantities Sold')
         st.write(top_10)
     
         st.title('Product Sales Time Series')
     
+    
         df_combined = pd.read_csv('dfcombined.csv')
         df_combined['Transaction'] = pd.to_datetime(df_combined['Transaction'])
-        products = df_combined['Product'].unique()
-        selected_product = st.selectbox('Select Product', products)
-        filtered_df = df_combined[df_combined['Product'] == selected_product]
     
-        st.write(f"{selected_product}")
-        fig, ax = plt.subplots(figsize=(10, 6))
-        filtered_df.set_index('Transaction').resample('D').size().plot(ax=ax)
+        products = df_combined['Product'].unique()
+        selected_products = st.multiselect('Select Products', products, default=products[0])
+    
+        if not selected_products:
+            st.warning("Please select at least one product.")
+        else:
+            frequencies = {'Daily': 'D', 'Weekly': 'W', 'Monthly': 'M'}
+            selected_frequency = st.selectbox('Select Frequency', list(frequencies.keys()))
+    
+            fig, ax = plt.subplots(figsize=(10, 6))
+            
+        for product in selected_products:
+            filtered_df = df_combined[df_combined['Product'] == product]
+            resampled_df = filtered_df.set_index('Transaction').resample(frequencies[selected_frequency]).size()
+            resampled_df.plot(ax=ax, marker='o', label=product)
+            
+            for idx, value in resampled_df.items():
+                ax.annotate(f'{value}', xy=(idx, value), xytext=(0, 5), textcoords='offset points', ha='center', fontsize=8)
+    
         plt.xlabel('Date')
         plt.ylabel('Number of Sales')
-        plt.title('Product Sales Time Series')
+        plt.title(f'Product Sales Time Series ({selected_frequency})')
+        plt.legend(title='Products')
         plt.grid(True)
         st.pyplot(fig)
+    
         
         st.title ('Product That Needs To Be Restocked')
         stock_needed = pd.read_csv('stokneed.csv')
