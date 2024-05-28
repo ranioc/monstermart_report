@@ -478,7 +478,7 @@ with tabs[2]:
         top_10 = df_sorted.head(10)
         st.write(top_10)
     
-        st.title('Product Sales Time Series')
+        st.header('Product Sales Time Series')
     
     
         df_combined = pd.read_csv('dfcombined.csv')
@@ -511,7 +511,7 @@ with tabs[2]:
         st.pyplot(fig)
     
         
-        st.title ('Product That Needs To Be Restocked')
+        st.header ('Product That Needs To Be Restocked')
         stock_needed = pd.read_csv('stokneed.csv')
         machines = stock_needed['Machine'].unique()
         selected_machine = st.selectbox('Select a machine', machines)
