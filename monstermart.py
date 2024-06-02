@@ -199,7 +199,6 @@ with tabs[1]:
     st.write(f'Total Financial Loss: Rp{total_financial_loss:,.2f}')
     st.write("Financial Loss Percentage: 1.6%")
     
-    
     ## Plot Time Series for Financial Losses
     fig_fl = px.line(fl_data, x='Date', y='Financial Loss', title='Financial Losses')
     fig_fl.update_layout(plot_bgcolor='#ffffe0')  # Soft background color (krem)
