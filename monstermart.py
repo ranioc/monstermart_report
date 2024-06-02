@@ -205,6 +205,17 @@ with tabs[1]:
     fig_fl.update_layout(plot_bgcolor='#ffffe0')  # Soft background color (krem)
     fig_fl.update_traces(line=dict(color='#00008b'))  # Soft line color (warna biru tua)
     st.plotly_chart(fig_fl, use_container_width=True)
+
+    # Display Top 5 Financial Losses table by Date
+    st.subheader('Top 5 Financial Losses by Date')
+    top_5_fl_tanggal = fl_tanggal_data.head(5).reset_index(drop=True)
+    top_5_fl_tanggal.index += 1  # Start index from 1
+    st.write(top_5_fl_tanggal)
+    
+    # Display option for more details on Top 5 Financial Losses table by Date
+    if st.button('Click here for more details (by Date)', key='fl_tanggal_detail'):
+        fl_tanggal_data.index += 1
+        st.write(fl_tanggal_data)
     
     # Display Top 5 Lost Products table
     st.subheader('Top 5 Lost Products')
@@ -238,17 +249,6 @@ with tabs[1]:
     if st.button('Click here for more details (by Machine)', key='fl_mesin_detail'):
         fl_mesin_data.index += 1
         st.write(fl_mesin_data)
-    
-    # Display Top 5 Financial Losses table by Date
-    st.subheader('Top 5 Financial Losses by Date')
-    top_5_fl_tanggal = fl_tanggal_data.head(5).reset_index(drop=True)
-    top_5_fl_tanggal.index += 1  # Start index from 1
-    st.write(top_5_fl_tanggal)
-    
-    # Display option for more details on Top 5 Financial Losses table by Date
-    if st.button('Click here for more details (by Date)', key='fl_tanggal_detail'):
-        fl_tanggal_data.index += 1
-        st.write(fl_tanggal_data)
 
 with tabs[2]:
     df1 = pd.read_csv('AKULAKU_FEB.csv')
