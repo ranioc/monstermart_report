@@ -519,7 +519,6 @@ with tabs[2]:
         st.subheader(f'Product with the least quantity on {selected_machine}')
         st.write(last_10)
     
-    
     if __name__ == "__main__":
         main()
 
