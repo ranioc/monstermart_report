@@ -508,7 +508,6 @@ with tabs[2]:
         plt.legend(title='Products')
         plt.grid(True)
         st.pyplot(fig)
-    
         
         st.header ('Product That Needs To Be Restocked')
         stock_needed = pd.read_csv('stokneed.csv')
